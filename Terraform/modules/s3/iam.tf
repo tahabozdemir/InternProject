@@ -10,11 +10,11 @@ resource "aws_iam_policy" "registry_bucket_policy" {
         "Sid" : "VisualEditor0",
         "Effect" : "Allow",
         "Action" : [
-        "s3:PutObject",
-        "s3:GetObject",
-        "s3:DeleteObject",
-        "s3:ListMultipartUploadParts",
-        "s3:AbortMultipartUpload"
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload"
         ],
         "Resource" : "arn:aws:s3:::${var.s3_bucket_name}/*"
       },

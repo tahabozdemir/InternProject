@@ -38,10 +38,10 @@ resource "aws_security_group" "sg_control_node" {
 resource "aws_security_group" "sg_managed_node" {
   name        = var.sg_managed_node_name
   description = var.sg_managed_node_description
-  vpc_id      = var.ubuntu_vpc_id 
-  depends_on  = [
+  vpc_id      = var.ubuntu_vpc_id
+  depends_on = [
     aws_security_group.sg_control_node
-    ]
+  ]
 
   ingress {
     from_port       = "22"

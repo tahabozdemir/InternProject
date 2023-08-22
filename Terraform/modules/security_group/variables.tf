@@ -1,13 +1,13 @@
 variable "sg_control_node_name" {
   type        = string
   description = "Name of the control node security group"
-  default     = "ghost_sg_control"
+  default     = "sg_control"
 }
 
 variable "sg_managed_node_name" {
   type        = string
   description = "Name of the managed node security group"
-  default     = "ghost_sg_managed"
+  default     = "sg_managed"
 }
 
 variable "sg_control_node_description" {
