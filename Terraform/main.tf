@@ -11,6 +11,14 @@ module "RegistryBucket" {
   source = "./modules/s3"
 }
 
+resource "aws_eip" "elastic_ip" {
+  for_each = { for server in var.configuration : server.server_name => server }
+  instance = aws_instance.ubuntu_server["${each.value.server_name}"].id
+  tags = {
+    Name = "${each.value.server_name} IP"
+  }
+}
+
 resource "aws_instance" "ubuntu_server" {
   for_each                    = { for server in var.configuration : server.server_name => server }
   ami                         = data.aws_ami.Ubuntu.id
