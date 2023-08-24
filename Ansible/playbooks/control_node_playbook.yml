@@ -1,0 +1,76 @@
+- name: Create Network
+  hosts: control_node
+  tasks:
+    - name: Create control_node_network
+      community.docker.docker_network:
+        - name: control_node_network
+
+- name: Create Volumes
+  hosts: control_node
+  tasks:
+    - name: Create grafana volume
+      community.docker.docker_volume:
+        - name: grafana_volume
+
+    - name: Create prometheus volume
+      community.docker.docker_volume:
+        - name: prometheus_volume
+
+- name: Run Docker containers
+  hosts: control_node
+  tasks:
+    - name: Create Jenkins Container
+      community.docker.docker_container:
+        name: Jenkins
+        image: jenkins/jenkins
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - ./config/jenkins_home:/var/jenkins_home
+          - /var/run/docker.sock:/var/run/docker.sock
+        state: started
+        privileged: true
+        networks: control_node_network
+
+    - name: Create Grafana Container
+      community.docker.docker_container:
+        name: Grafana
+        image: grafana/grafana-oss
+        ports:
+          - "3000:3000"
+        volumes:
+          - ./config/grafana/custom.ini:/etc/grafana/custom.ini
+          - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+          - grafana_volume:/var/lib/grafana
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        command: "--config.file=../config/prometheus.yml"
+        networks: control_node_network
+
+    - name: Create Prometheus Container
+      community.docker.docker_container:
+        name: Prometheus
+        image: prom/prometheus
+        ports:
+          - "9090:9090"
+        volumes:
+          - ./config/prometheus:/config
+          - prometheus_volume:/prometheus
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        networks: control_node_network
+
+    - name: Create Node Exporter Container
+      community.docker.docker_container:
+        name: Node Exporter
+        image: quay.io/prometheus/node-exporter:latest
+        volumes:
+          - /:/host:ro,rslave
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        command: "--path.rootfs=/host"
+        networks: control_node_network

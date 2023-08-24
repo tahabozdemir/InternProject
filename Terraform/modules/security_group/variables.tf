@@ -10,6 +10,18 @@ variable "sg_managed_node_name" {
   default     = "sg_managed"
 }
 
+variable "sg_db_name" {
+  type        = string
+  description = "Name of the managed node security group"
+  default     = "sg_managed"
+}
+
+variable "sg_db_description" {
+  type        = string
+  description = "Description of Database security group"
+  default     = "Allow PostgreSQL access to servers."
+}
+
 variable "sg_control_node_description" {
   type        = string
   description = "Description of the control node security group"

@@ -14,7 +14,6 @@ echo \
 # Install Docker Engine and Docker Compose
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-
 #Creating swap
 sudo fallocate -l 2G /swapfile
 sudo chmod 600 /swapfile

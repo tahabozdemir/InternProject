@@ -15,33 +15,43 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_route_table" "rt_public" {
+resource "aws_route_table" "route_table" {
+  for_each = { for vpc in var.configuration_rt : vpc.route_table_name => route_table_name }
+  
   vpc_id = aws_vpc.ubuntu_vpc.id
 
   tags = {
-    Name = "Public Route Table"
+    Name = "${each.value.route_table_name}"
   }
 }
 
 resource "aws_route" "route_public" {
-  route_table_id         = aws_route_table.rt_public.id
+  route_table_id         = aws_route_table.route_table.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-resource "aws_subnet" "subnet_public" {
+resource "aws_subnet" "subnets" {
+  for_each          = toset(var.required_subnets)
   vpc_id            = aws_vpc.ubuntu_vpc.id
-  cidr_block        = var.subnet_public_cidr
-  availability_zone = var.subnet_availability_zones[0]
+  cidr_block        = lookup(var.subnet_conf[each.key], "cidr")
+  availability_zone = lookup(var.subnet_conf[each.key], "availability_zone")
 
   tags = {
-    Name = "Subnet eu-west-1a"
+    Name = each.key
   }
 }
 
-resource "aws_route_table_association" "subnet_association_public" {
-  subnet_id      = aws_subnet.subnet_public.id
-  route_table_id = aws_route_table.rt_public.id
+resource "aws_route_table_association" "public" {
+  for_each       = {for name, subnet in aws_subnet.subnets: name => subnet if length(regexall("public-", name)) > 0}   
+
+  subnet_id      = each.value.id
+  route_table_id = local.route_table_ids[0]
 }
 
+resource "aws_route_table_association" "private" {
+  for_each       = {for name, subnet in aws_subnet.subnets: name => subnet if length(regexall("private-", name)) > 0}   
 
+  subnet_id      = each.value.id
+  route_table_id = local.route_table_ids[1]
+}

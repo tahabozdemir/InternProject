@@ -74,3 +74,17 @@ resource "aws_security_group" "sg_managed_node" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "sg_db" {
+  name        = var.sg_db_name
+  description = var.sg_db_description
+  vpc_id      = var.ubuntu_vpc_id
+
+  ingress {
+    from_port       = "5432"
+    to_port         = "5432"
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_managed_node.id]
+    description     = "Allow PostgreSQL traffic from only the sg_managed_node"
+  }
+}

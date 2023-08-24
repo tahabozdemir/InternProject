@@ -1,5 +1,13 @@
 module "VPC" {
   source = "./modules/vpc"
+  configuration_rt = [
+    {
+        "route_table_name" : "Public Route Table"
+    },
+    {
+        "route_table_name" : "Private Route Table"
+    }
+]
 }
 
 module "SecurityGroup" {
@@ -9,6 +17,12 @@ module "SecurityGroup" {
 
 module "RegistryBucket" {
   source = "./modules/s3"
+}
+
+module "RDS" {
+  source                 = "./modules/rds"
+  vpc_subnet_private_id  = module.VPC.vpc_subnet_private_id
+  sg_db_id               = module.SecurityGroup.sg_db_id
 }
 
 resource "aws_eip" "elastic_ip" {

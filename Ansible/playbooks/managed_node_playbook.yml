@@ -1,0 +1,34 @@
+- name: Create Network
+  hosts: managed_node
+  tasks:
+    - name: Create managed_node_network
+      community.docker.docker_network:
+        - name: managed_node_network
+
+- name: Create Volumes
+  hosts: managed_node
+  tasks:
+    - name: Create grafana volume
+      community.docker.docker_volume:
+        - name: grafana_volume
+
+    - name: Create prometheus volume
+      community.docker.docker_volume:
+        - name: prometheus_volume
+
+- name: Run Docker containers
+  hosts: managed_node
+  tasks:
+    - name: Create Jenkins Container
+      community.docker.docker_container:
+        name: Jenkins
+        image: jenkins/jenkins
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - ./config/jenkins_home:/var/jenkins_home
+          - /var/run/docker.sock:/var/run/docker.sock
+        state: started
+        privileged: true
+        networks: managed_node_network
