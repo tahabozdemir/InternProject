@@ -69,6 +69,11 @@ variable "allowed_sonarqube_ip" {
   default     = "0.0.0.0/0"
 }
 
+variable "allowed_registry_ip" {
+  description = "Allowed IP for sonarQube access"
+  default     = "0.0.0.0/0"
+}
+
 variable "ubuntu_vpc_id" {
   type = string
 }

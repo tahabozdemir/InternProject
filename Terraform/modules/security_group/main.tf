@@ -98,6 +98,14 @@ resource "aws_security_group" "sg_managed_node" {
     description = "sonarQube access"
   }
 
+    ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_registry_ip]
+    description = "Registry access"
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
