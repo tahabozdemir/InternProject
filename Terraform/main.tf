@@ -1,13 +1,5 @@
 module "VPC" {
   source = "./modules/vpc"
-  configuration_rt = [
-    {
-      "route_table_name" : "Private Route Table"
-    },
-    {
-      "route_table_name" : "Public Route Table"
-    }
-  ]
 }
 
 module "SecurityGroup" {

@@ -16,12 +16,12 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_route_table" "route_table" {
-  for_each = { for vpc in var.configuration_rt : vpc.route_table_name => vpc }
+  count = 2
   
   vpc_id = aws_vpc.ubuntu_vpc.id
 
   tags = {
-    Name = "${each.value.route_table_name}"
+    Name = "Route Table ${count.index}"
   }
 }
 

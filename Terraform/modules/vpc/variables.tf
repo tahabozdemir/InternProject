@@ -3,18 +3,6 @@ variable "vpc_cidr" {
   default = "172.16.0.0/16"
 }
 
-variable "configuration_rt" {
-  type = list(map(string))
-  default = [
-    {
-        "route_table_name" : "Public Route Table"
-    },
-    {
-        "route_table_name" : "Private Route Table"
-    }
-]
-}
-
 variable "required_subnets" {
   description = "list of subnets required"
   default     = ["public-1a", "private-1a","private-1b"]
@@ -25,6 +13,7 @@ variable "subnet_config" {
     cidr              = string
     availability_zone = string
   }))
+  
   default = {
     "public-1a" : {
       cidr              = "172.16.1.0/24"
