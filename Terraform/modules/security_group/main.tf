@@ -27,6 +27,29 @@ resource "aws_security_group" "sg_control_node" {
     description = "HTTPS access"
   }
 
+   ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_jenkins_ip]
+    description = "Jenkins access"
+  }
+
+    ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_grafana_ip]
+    description = "Grafana access"
+  }
+    ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_prometheus_ip]
+    description = "Prometheus access"
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -65,6 +88,14 @@ resource "aws_security_group" "sg_managed_node" {
     protocol    = "tcp"
     cidr_blocks = [var.allowed_https_ip]
     description = "HTTPS access"
+  }
+
+    ingress {
+    from_port   = 9000
+    to_port     = 9000
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_sonarqube_ip]
+    description = "sonarQube access"
   }
 
   egress {

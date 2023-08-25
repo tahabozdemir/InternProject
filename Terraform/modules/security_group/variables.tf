@@ -49,6 +49,26 @@ variable "allowed_https_ip" {
   default     = "0.0.0.0/0"
 }
 
+variable "allowed_jenkins_ip" {
+  description = "Allowed IP for Jenkins access"
+  default     = "0.0.0.0/0"
+}
+
+variable "allowed_prometheus_ip" {
+  description = "Allowed IP for Prometheus access"
+  default     = "0.0.0.0/0"
+}
+
+variable "allowed_grafana_ip" {
+  description = "Allowed IP for Grafana access"
+  default     = "0.0.0.0/0"
+}
+
+variable "allowed_sonarqube_ip" {
+  description = "Allowed IP for sonarQube access"
+  default     = "0.0.0.0/0"
+}
+
 variable "ubuntu_vpc_id" {
   type = string
 }
