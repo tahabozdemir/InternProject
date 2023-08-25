@@ -13,7 +13,7 @@ variable "sg_managed_node_name" {
 variable "sg_db_name" {
   type        = string
   description = "Name of the managed node security group"
-  default     = "sg_managed"
+  default     = "sg_database"
 }
 
 variable "sg_db_description" {

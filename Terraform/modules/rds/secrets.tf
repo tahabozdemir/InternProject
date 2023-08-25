@@ -1,11 +1,11 @@
 variable "db_name" {
   type    = string
-  default = "ghostdb"
+  default = "TahaBzdDB"
 }
 
 variable "db_username" {
   type    = string
-  default = "admin"
+  default = "TahaBzd"
 }
 
 variable "db_password" {

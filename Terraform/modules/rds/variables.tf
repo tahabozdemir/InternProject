@@ -2,13 +2,13 @@ variable "sg_db_id" {
   type = string
 }
 
-variable "vpc_subnet_private_id" {
-  type = string
+variable "vpc_subnet_private_ids" {
+  type = list(string)
 }
 
 variable "db_identifier" {
   type    = string
-  default = "ghost-instance"
+  default = "sonarqubiyc-instance"
 }
 
 variable "db_instance_class" {

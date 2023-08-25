@@ -5,11 +5,19 @@ variable "vpc_cidr" {
 
 variable "configuration_rt" {
   type = list(map(string))
+  default = [
+    {
+        "route_table_name" : "Public Route Table"
+    },
+    {
+        "route_table_name" : "Private Route Table"
+    }
+]
 }
 
 variable "required_subnets" {
   description = "list of subnets required"
-  default     = ["public-1a", "private-1a", "public-1b", "private-1b"]
+  default     = ["public-1a", "private-1a","private-1b"]
 }
 
 variable "subnet_config" {
