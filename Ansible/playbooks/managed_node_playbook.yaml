@@ -3,22 +3,23 @@
   tasks:
     - name: Create managed_node_network
       community.docker.docker_network:
-        - name: managed_node_network
+        name: managed_node_network
 
 - name: Create Volumes
   hosts: managed_node
   tasks:
     - name: Create sonarqube_data volume
+
       community.docker.docker_volume:
-        - name: sonarqube_data
+        name: sonarqube_data
 
     - name: Create sonarqube_extensions volume
       community.docker.docker_volume:
-        - name: sonarqube_extensions
+        name: sonarqube_extensions
 
     - name: Create sonarqube_logs volume
       community.docker.docker_volume:
-        - name: sonarqube_logs
+        name: sonarqube_logs
 
 - name: Run Docker containers
   hosts: managed_node
@@ -28,7 +29,7 @@
         name: sonarQube
         image: sonarqube:community
         env:
-          SONAR_JDBC_URL: jdbc:postgresql://rds_endpoint:5432/sonar
+          SONAR_JDBC_URL: jdbc:postgresql://sonarqubiyc-instance.c05nmkqadn7z.eu-west-1.rds.amazonaws.com:5432/sonar
           SONAR_JDBC_USERNAME: sonar
           SONAR_JDBC_PASSWORD: sonar
         volumes:
@@ -51,12 +52,10 @@
           REGISTRY_STORAGE_S3_BUCKET: registry-bucket-taha
           REGISTRY_STORAGE_S3_ENCRYPT: false
           REGISTRY_STORAGE_S3_ROOTDIRECTORY: /docker-registry
-          AWS_ACCESS_KEY_ID: your_aws_access_key
-          AWS_SECRET_ACCESS_KEY: your_aws_secret_key
         volumes:
-          - ./config/registry/data:/var/lib/registry 
+          - ./config/registry/data:/var/lib/registry
         ports:
-          - "9000:9000"
+          - "5000:5000"
         state: started
         restart_policy: "always"
         privileged: true
