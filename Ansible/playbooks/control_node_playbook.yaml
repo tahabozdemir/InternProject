@@ -35,10 +35,6 @@
         networks:
           - name: control_node_network
 
-    # - name: Give Permisson jenkins_home directory
-    #  ansible.builtin.command: chown -R 1000:1000 ./config/jenkins_home
-    #  changed_when: false
-
     - name: Change ownership with file module
       ansible.builtin.file:
         path: ./config/jenkins_home
@@ -62,12 +58,6 @@
         networks:
           - name: control_node_network
 
-    - name: Copy Prometheus config file
-      ansible.builtin.copy:
-        src: ../configs/prometheus.yml
-        dest: ./config/prometheus/prometheus.yml
-        mode: "0644"
-
     - name: Create Prometheus Container
       community.docker.docker_container:
         name: Prometheus
@@ -83,6 +73,13 @@
         command: "--config.file=/etc/prometheus/prometheus.yml"
         networks:
           - name: control_node_network
+
+    - name: Copy Prometheus config file
+      become: true
+      ansible.builtin.copy:
+        src: ../configs/prometheus.yml
+        dest: ./config/prometheus/prometheus.yml
+        mode: "0644"
 
     - name: Create Node Exporter Container
       community.docker.docker_container:
