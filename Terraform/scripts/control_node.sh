@@ -1,5 +1,6 @@
 #!/bin/bash
 sudo apt-get update -y
+sudo apt install software-properties-common
 sudo apt-get install -y ca-certificates curl gnupg
 #Add Docker’s official GPG key:
 sudo install -y -m 0755 -d /etc/apt/keyrings
@@ -14,8 +15,12 @@ echo \
 # Install Docker Engine and Docker Compose
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
 # Install Ansible
-sudo apt update -y
+sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible -y
 
 #Creating swap
