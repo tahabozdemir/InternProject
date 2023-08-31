@@ -26,6 +26,7 @@
         volumes:
           - ./config/jenkins_home:/var/jenkins_home
           - /var/run/docker.sock:/var/run/docker.sock
+          - $(which docker):/usr/bin/docker
         ports:
           - "8080:8080"
         state: started
@@ -83,7 +84,7 @@
 
     - name: Create Node Exporter Container
       community.docker.docker_container:
-        name: NodeExporter
+        name: node_exporter
         image: quay.io/prometheus/node-exporter:latest
         volumes:
           - /:/host:ro,rslave
