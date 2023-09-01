@@ -1,0 +1,96 @@
+- name: Create Network
+  hosts: control_node
+  tasks:
+    - name: Create control_node_network
+      community.docker.docker_network:
+        name: control_node_network
+
+- name: Create Volumes
+  hosts: control_node
+  tasks:
+    - name: Create grafana volume
+      community.docker.docker_volume:
+        name: grafana_volume
+
+    - name: Create prometheus volume
+      community.docker.docker_volume:
+        name: prometheus_volume
+
+- name: Run Docker containers
+  hosts: control_node
+  tasks:
+    - name: Create Jenkins Container
+      community.docker.docker_container:
+        name: Jenkins
+        image: jenkins/jenkins
+        volumes:
+          - ./config/jenkins_home:/var/jenkins_home
+          - /var/run/docker.sock:/var/run/docker.sock
+          - /usr/bin/docker:/usr/bin/docker
+        ports:
+          - "8080:8080"
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        network_mode: default
+        networks:
+          - name: control_node_network
+
+    - name: Change ownership with file module
+      ansible.builtin.file:
+        path: ./config/jenkins_home
+        owner: 1000
+        group: 1000
+        recurse: true
+
+    - name: Create Grafana Container
+      community.docker.docker_container:
+        name: Grafana
+        image: grafana/grafana-oss
+        volumes:
+          - ./config/grafana/custom.ini:/etc/grafana/custom.ini
+          - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+          - grafana_volume:/var/lib/grafana
+        ports:
+          - "3000:3000"
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        networks:
+          - name: control_node_network
+
+    - name: Create Prometheus Container
+      community.docker.docker_container:
+        name: Prometheus
+        image: prom/prometheus
+        volumes:
+          - ./config/prometheus:/etc/prometheus/
+          - prometheus_volume:/prometheus
+        ports:
+          - "9090:9090"
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        command: "--config.file=/etc/prometheus/prometheus.yml"
+        networks:
+          - name: control_node_network
+
+    - name: Copy Prometheus config file
+      become: true
+      ansible.builtin.copy:
+        src: ../configs/prometheus.yml
+        dest: ./config/prometheus/prometheus.yml
+        mode: "0644"
+
+    - name: Create Node Exporter Container
+      community.docker.docker_container:
+        name: node_exporter
+        image: quay.io/prometheus/node-exporter:latest
+        volumes:
+          - /:/host:ro,rslave
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        command: "--path.rootfs=/host"
+        networks:
+          - name: control_node_network
