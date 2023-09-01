@@ -21,7 +21,7 @@ pipeline {
         stage('Build and push docker image') {
             steps {
                 script {
-                    docker.build("63.35.99.174:5000/tahabzd:${commit_id}", '.').push()
+                    docker.build("ipaddr_here/image_name:${commit_id}", '.').push()
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
         stage('Docker remove image from EC2') {
             steps {
                 script {
-                    sh "docker image rm -f 63.35.99.174:5000/tahabzd:${commit_id}"
+                    sh "docker image rm -f ipaddr_here/image_name:${commit_id}"
                 }
             }
         }

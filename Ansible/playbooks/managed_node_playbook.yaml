@@ -29,7 +29,7 @@
         name: sonarQube
         image: sonarqube:community
         env:
-          SONAR_JDBC_URL: jdbc:postgresql://sonarqubiyc-instance.c05nmkqadn7z.eu-west-1.rds.amazonaws.com:5432/postgres
+          SONAR_JDBC_URL: jdbc:postgresql://rds_endpoint_here:5432/postgres
           SONAR_JDBC_USERNAME: TahaBzd
           SONAR_JDBC_PASSWORD: password123!
         volumes:
