@@ -1,0 +1,65 @@
+- name: Create Network
+  hosts: managed_node
+  tasks:
+    - name: Create managed_node_network
+      community.docker.docker_network:
+        name: managed_node_network
+
+- name: Create Volumes
+  hosts: managed_node
+  tasks:
+    - name: Create sonarqube_data volume
+
+      community.docker.docker_volume:
+        name: sonarqube_data
+
+    - name: Create sonarqube_extensions volume
+      community.docker.docker_volume:
+        name: sonarqube_extensions
+
+    - name: Create sonarqube_logs volume
+      community.docker.docker_volume:
+        name: sonarqube_logs
+
+- name: Run Docker containers
+  hosts: managed_node
+  tasks:
+    - name: Create sonarQube Container
+      community.docker.docker_container:
+        name: sonarQube
+        image: sonarqube:community
+        env:
+          SONAR_JDBC_URL: jdbc:postgresql://rds_endpoint_here:5432/postgres
+          SONAR_JDBC_USERNAME: TahaBzd
+          SONAR_JDBC_PASSWORD: password123!
+        volumes:
+          - sonarqube_data:/opt/sonarqube/data
+          - sonarqube_extensions:/opt/sonarqube/extensions
+          - sonarqube_logs:/opt/sonarqube/logs
+        ports:
+          - "9000:9000"
+        state: started
+        privileged: true
+        restart_policy: "unless-stopped"
+        networks:
+          - name: managed_node_network
+
+    - name: Create Registry Container
+      community.docker.docker_container:
+        name: Registry
+        image: registry:latest
+        env:
+          REGISTRY_STORAGE: s3
+          REGISTRY_STORAGE_S3_REGION: eu-west-1
+          REGISTRY_STORAGE_S3_BUCKET: registry-bucket-taha
+          REGISTRY_STORAGE_S3_ENCRYPT: "false"
+          REGISTRY_STORAGE_S3_ROOTDIRECTORY: /docker-registry
+        volumes:
+          - ./config/registry/data:/var/lib/registry
+        ports:
+          - "5000:5000"
+        state: started
+        restart_policy: "always"
+        privileged: true
+        networks:
+          - name: managed_node_network
